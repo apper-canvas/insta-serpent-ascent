@@ -106,14 +106,15 @@
   }
 
   
+  .ladder-path {
     @apply absolute stroke-green-500 dark:stroke-green-400 fill-none z-0 stroke-2 opacity-70 stroke-dasharray-2;
+  }
+  
+  @keyframes snake-pulse {
     0% { opacity: 0.4; }
     50% { opacity: 0.8; }
     100% { opacity: 0.4; }
   }
-
-    @apply w-4 h-4 md:w-5 md:h-5 rounded-full border-2 border-white shadow-md z-10 flex items-center justify-center text-white text-xs font-bold;
-    @apply absolute w-4 h-4 md:w-5 md:h-5 rounded-full border-2 border-white shadow-md z-10 flex items-center justify-center text-white text-xs font-bold;
 
   .player-token {
     @apply absolute w-4 h-4 md:w-5 md:h-5 rounded-full border-2 border-white shadow-md z-10;
