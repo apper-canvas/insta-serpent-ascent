@@ -24,6 +24,7 @@ function MainFeature() {
 
   // Icons
   const DiceIcon = getIcon('Dices');
+  const FlagIcon = getIcon('Flag');
   const RefreshIcon = getIcon('RefreshCcw');
   const PlusIcon = getIcon('Plus');
   const TrashIcon = getIcon('Trash2');
@@ -32,6 +33,7 @@ function MainFeature() {
   const PlayIcon = getIcon('Play');
   const SettingsIcon = getIcon('Settings');
   const UserIcon = getIcon('User');
+  const TrophyIcon = getIcon('Trophy');
 
   // Generate board elements based on game mode
   useEffect(() => {
@@ -215,7 +217,7 @@ function MainFeature() {
     const totalCells = boardSize * boardSize;
     
     for (let i = boardSize; i >= 1; i--) {
-      const row = [];
+      const row = [];  
       // Alternate direction for snake-like pattern
       if (i % 2 === 0) {
         // Left to right
@@ -231,9 +233,15 @@ function MainFeature() {
         }
       }
       cells.push(
-        <div key={`row-${i}`} className="flex">
+        <motion.div 
+          key={`row-${i}`} 
+          className="flex"
+          initial={{ opacity: 0, y: 10 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.05 * (boardSize - i) }}
+        >
           {row}
-        </div>
+        </motion.div>
       );
     }
     
@@ -241,6 +249,55 @@ function MainFeature() {
   };
 
   // Render individual cell
+  const getCellPosition = (number) => {
+    const row = Math.ceil(number / boardSize);
+    const isEvenRow = row % 2 === 0;
+    let col;
+    
+    if (isEvenRow) {
+      col = number - (row - 1) * boardSize;
+    } else {
+      col = boardSize - (number - (row - 1) * boardSize) + 1;
+    }
+    
+    // Adjust for zero-based indexing
+    return { 
+      row: boardSize - row, 
+      col: col - 1 
+    };
+  };
+  
+  // Render visual snakes and ladders
+  const renderBoardElements = () => {
+    if (!gameStarted) return null;
+    
+    return (
+      <div className="absolute inset-0 w-full h-full pointer-events-none z-0">
+        {boardElements.map(element => {
+          const startPos = getCellPosition(element.startPosition);
+          const endPos = getCellPosition(element.endPosition);
+          
+          // Calculate SVG path
+          const startX = (startPos.col + 0.5) * (100 / boardSize) + '%';
+          const startY = (startPos.row + 0.5) * (100 / boardSize) + '%';
+          const endX = (endPos.col + 0.5) * (100 / boardSize) + '%';
+          const endY = (endPos.row + 0.5) * (100 / boardSize) + '%';
+          
+          // Create a curved path
+          const curveX = ((parseFloat(startX) + parseFloat(endX)) / 2) + '%';
+          const curveY = ((parseFloat(startY) + parseFloat(endY)) / 2 - 5) + '%';
+          
+          const pathClass = element.type === 'snake' ? 'snake-path' : 'ladder-path';
+          const pathD = element.type === 'snake' 
+            ? `M ${startX} ${startY} Q ${curveX} ${curveY}, ${endX} ${endY}` 
+            : `M ${startX} ${startY} L ${endX} ${endY}`;
+          
+          return <path key={element.id} className={pathClass} d={pathD} />;
+        })}
+      </div>
+    );
+  };
+  
   const renderCell = (number, totalCells) => {
     // Determine if this cell has a snake or ladder
     const snakeStart = boardElements.find(el => el.type === "snake" && el.startPosition === number);
@@ -251,33 +308,49 @@ function MainFeature() {
     if (snakeStart) cellClass = "snake-cell";
     if (ladderStart) cellClass = "ladder-cell";
     
-    // Add final cell styling
+    // Special styling for start and finish
+    if (number === 1) cellClass = "start-cell";
+    if (number === totalCells) cellClass = "finish-cell";
     if (number === totalCells) cellClass += " bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400";
 
-    return (
-      <div key={`cell-${number}`} className={`game-cell ${cellClass}`}>
+      <motion.div 
+        key={`cell-${number}`} 
+        className={`game-cell ${cellClass}`}
+        initial={{ opacity: 0, scale: 0.9 }}
+        animate={{ opacity: 1, scale: 1 }}
+        transition={{ duration: 0.3, delay: 0.01 * number }}
+      >
+        <span className="z-10 relative">{number}</span>
         {number}
-        
-        {/* Show snake or ladder icon */}
-        {snakeStart && <ArrowDownIcon className="absolute top-0 right-0 w-3 h-3 text-red-600" />}
+        {/* Cell icons */}
+        {number === 1 && <PlayIcon className="absolute top-0 right-0 w-3 h-3 text-blue-600" />}
+        {number === totalCells && <TrophyIcon className="absolute top-0 right-0 w-3 h-3 text-purple-600" />}
+        {snakeStart && <ArrowDownIcon className="absolute top-0 right-0 w-3 h-3 text-red-600 animate-pulse" />}
+        {ladderStart && <ArrowUpIcon className="absolute top-0 right-0 w-3 h-3 text-green-600 animate-pulse" />}
         {ladderStart && <ArrowUpIcon className="absolute top-0 right-0 w-3 h-3 text-green-600" />}
         
-        {/* Render player tokens */}
+        <div className="absolute inset-0 flex items-center justify-center z-20">
         <div className="flex flex-wrap gap-1 justify-center">
           {players.map((player, index) => 
             player.position === number && (
               <motion.div
-                key={`player-${player.id}`}
+                className={`player-token ${currentPlayer === index && !winner ? 'active-player' : ''}`}
                 className="player-token"
                 style={{ backgroundColor: player.color }}
                 initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
+                transition={{ 
+                  type: "spring", 
+                  stiffness: 500, 
+                  damping: 30 
+                }}
                 transition={{ type: "spring", stiffness: 500, damping: 30 }}
-                title={player.name}
+              >
+                {player.id}
+              </motion.div>
               />
             )
           )}
-        </div>
+      </motion.div>
       </div>
     );
   };
@@ -290,7 +363,11 @@ function MainFeature() {
         onClick={rollDice}
         whileHover={{ scale: 1.05 }}
         whileTap={{ scale: 0.95 }}
-      >
+        animate={isRolling ? { 
+          rotate: [0, 15, 0, -15, 0],
+          y: [0, -10, 0, -5, 0]
+        } : {}}
+        transition={{ duration: 0.5, repeat: isRolling ? Infinity : 0 }}>
         {value ? (
           <>
             {/* Render dice dots based on value */}
@@ -332,7 +409,7 @@ function MainFeature() {
     <div className="mb-16">
       <div className="card overflow-visible">
         <div className="bg-primary text-white p-4 flex justify-between items-center">
-          <h2 className="text-xl md:text-2xl font-bold">Serpent Ascent</h2>
+          <h2 className="text-xl md:text-2xl font-bold">Snake and Ladder</h2>
           <div className="flex gap-2">
             {gameStarted ? (
               <button 
@@ -362,7 +439,7 @@ function MainFeature() {
               exit={{ opacity: 0, height: 0 }}
               transition={{ duration: 0.3 }}
             >
-              <h3 className="text-xl font-bold mb-4">Game Setup</h3>
+              <h3 className="text-xl font-bold mb-4">Game Setup 🎮</h3>
               
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div>
@@ -399,7 +476,7 @@ function MainFeature() {
               </div>
               
               <div className="mt-6">
-                <h4 className="font-medium mb-3">Players</h4>
+                <h4 className="font-medium mb-3">Players 👥</h4>
                 <div className="space-y-3">
                   {players.map(player => (
                     <div 
@@ -465,15 +542,23 @@ function MainFeature() {
             <div className="flex flex-col md:flex-row gap-4 md:gap-8">
               {/* Game Board */}
               <div className="order-2 md:order-1 flex-grow">
-                <div className="bg-surface-100 dark:bg-surface-800 border border-surface-300 dark:border-surface-700 rounded-xl overflow-hidden">
-                  <div className="board" style={{ 
-                    display: 'grid',
-                    width: '100%', 
-                    aspectRatio: '1/1',
-                    maxHeight: 'calc(100vh - 300px)',
-                    overflow: 'auto'
-                  }}>
-                    {renderBoard()}
+                <div className="bg-surface-100 dark:bg-surface-800 border-2 border-surface-300 dark:border-surface-700 rounded-xl overflow-hidden shadow-xl">
+                  <div className="relative">
+                    {/* Board title banner */}
+                    <div className="absolute top-0 left-0 right-0 bg-primary text-white text-center py-1 text-sm font-bold z-10">
+                      Snake and Ladder Board
+                    </div>
+                    
+                    {/* SVG container for snakes and ladders */}
+                    <svg className="absolute inset-0 w-full h-full" viewBox="0 0 100 100" preserveAspectRatio="none">
+                      {renderBoardElements()}
+                    </svg>
+                    
+                    <div className="board pt-6" style={{ 
+                      width: '100%', aspectRatio: '1/1', maxHeight: 'calc(100vh - 300px)',
+                    }}>
+                      {renderBoard()}
+                    </div>
                   </div>
                 </div>
               </div>
@@ -488,7 +573,9 @@ function MainFeature() {
                       animate={{ scale: 1, opacity: 1 }}
                       transition={{ duration: 0.5 }}
                     >
-                      <div className="text-6xl mb-4">🏆</div>
+                      <motion.div className="text-6xl mb-4" animate={{ rotate: [0, 10, 0, -10, 0] }} 
+                       transition={{ duration: 2, repeat: Infinity }}>
+                        🏆</motion.div>
                       <h3 className="text-xl font-bold text-primary mb-2">
                         {winner.name} Wins!
                       </h3>
@@ -504,7 +591,7 @@ function MainFeature() {
                     </motion.div>
                   ) : (
                     <>
-                      <h3 className="text-lg font-medium mb-4">
+                      <h3 className="text-lg font-medium mb-4 flex items-center gap-2">
                         Current Turn: <span className="font-bold" style={{ color: players[currentPlayer].color }}>
                           {players[currentPlayer].name}
                         </span>
@@ -524,24 +611,33 @@ function MainFeature() {
                       </button>
                       
                       <div className="mt-6 space-y-3">
-                        <h4 className="font-medium">Player Positions:</h4>
-                        {players.map(player => (
-                          <div 
+                        <h4 className="font-medium flex items-center gap-1">
+                          <FlagIcon className="w-4 h-4" /> Player Positions:
+                        </h4>
+                        {players.map((player, index) => (
+                          <motion.div 
                             key={`pos-${player.id}`} 
-                            className="flex items-center"
+                            className={`flex items-center p-2 rounded-lg ${currentPlayer === index && !winner ? 'bg-surface-200 dark:bg-surface-700' : ''}`}
+                            animate={currentPlayer === index && !winner ? { x: [0, 3, 0, -3, 0] } : {}}
+                            transition={{ duration: 0.5, repeat: currentPlayer === index && !winner ? Infinity : 0, repeatType: 'loop' }}
                           >
                             <div 
-                              className="w-4 h-4 rounded-full mr-2" 
+                              className={`w-5 h-5 rounded-full mr-2 flex items-center justify-center text-white text-xs font-bold border-2 border-white`}
                               style={{ backgroundColor: player.color }}
-                            ></div>
-                            <span className="text-sm">
-                              {player.name}: <span className="font-medium">{player.position}</span>
+                            >
+                              {player.id}
+                            </div>
+                            <span className="text-sm flex-grow">
+                              {player.name}: <span className="font-medium">{player.position}</span> / {boardSize * boardSize}
+                            </span>
+                            {currentPlayer === index && !isRolling && !winner && (
                               {player.position === players[currentPlayer].position && 
                                currentPlayer === players.findIndex(p => p.id === player.id) && 
                                !isRolling && 
                                " (Current)"}
-                            </span>
-                          </div>
+                              <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
+                            )}
+                          </motion.div>
                         ))}
                       </div>
                     </>
