@@ -42,7 +42,7 @@ function App() {
               🎲
             </motion.div>
             <h1 className="text-xl md:text-2xl font-bold bg-gradient-to-r from-primary to-secondary bg-clip-text text-transparent">
-              Serpent Ascent
+              Snake and Ladder
             </h1>
           </div>
           
@@ -68,7 +68,7 @@ function App() {
       
       <footer className="bg-white dark:bg-surface-800 border-t border-surface-200 dark:border-surface-700 py-4">
         <div className="container mx-auto px-4 text-center text-sm text-surface-500">
-          <p>© 2023 Serpent Ascent. All rights reserved.</p>
+          <p>© 2023 Snake and Ladder. All rights reserved.</p>
         </div>
       </footer>
       
