@@ -57,7 +57,7 @@ function Home() {
           animate={{ opacity: 1, y: 0 }}
           transition={{ duration: 0.5 }}
         >
-          Climb to Victory in <span className="text-primary">Serpent Ascent</span>
+          Climb to Victory in <span className="text-primary">Snake and Ladder</span>
         </motion.h1>
         <motion.p 
           className="text-lg md:text-xl text-surface-600 dark:text-surface-400 max-w-3xl mx-auto"
