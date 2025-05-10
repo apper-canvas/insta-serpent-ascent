@@ -87,40 +87,33 @@
   .start-cell {
     @apply bg-white dark:bg-surface-700;
   }
-
-    @apply bg-blue-100 dark:bg-blue-950 text-blue-600 dark:text-blue-400;
+  
+  .snake-cell {
+    @apply bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400;
   }
-
   
   .finish-cell {
     @apply bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400;
   }
   
-    @apply bg-red-100 dark:bg-red-950 text-red-600 dark:text-red-400;
-    @apply bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400; 
+  .ladder-cell {
+    @apply bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400;
+  }
 
   .snake-path {
     @apply absolute stroke-red-500 dark:stroke-red-400 fill-none z-0 stroke-2 opacity-70;
     animation: snake-pulse 3s infinite;
   }
 
-  .ladder-path {
-    @apply absolute stroke-green-500 dark:stroke-green-400 fill-none z-0 stroke-2 opacity-70 stroke-dasharray-2;
-  }
-
-  @keyframes snake-pulse {
-  }
   
+    @apply absolute stroke-green-500 dark:stroke-green-400 fill-none z-0 stroke-2 opacity-70 stroke-dasharray-2;
+    0% { opacity: 0.4; }
     50% { opacity: 0.8; }
     100% { opacity: 0.4; }
   }
-  
-  .player-token {
 
-  .ladder-cell {
-    @apply bg-green-100 dark:bg-green-950 text-green-600 dark:text-green-400;
     @apply w-4 h-4 md:w-5 md:h-5 rounded-full border-2 border-white shadow-md z-10 flex items-center justify-center text-white text-xs font-bold;
-    @apply absolute;
+    @apply absolute w-4 h-4 md:w-5 md:h-5 rounded-full border-2 border-white shadow-md z-10 flex items-center justify-center text-white text-xs font-bold;
 
   .player-token {
     @apply absolute w-4 h-4 md:w-5 md:h-5 rounded-full border-2 border-white shadow-md z-10;
