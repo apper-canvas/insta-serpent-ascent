@@ -402,9 +402,9 @@ function MainFeature() {
           </>
         ) : (
           <DiceIcon className="w-6 h-6 text-primary" />
-        )}
-      </motion.div>
-    );
+    </motion.div>
+  );
+};
   };
   
   return (
