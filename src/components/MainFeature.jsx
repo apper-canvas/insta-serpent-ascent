@@ -344,17 +344,17 @@ function MainFeature() {
                 }}
               >
               >
-                {player.id}
-              </motion.div>
-            )
+                                  type: "spring",
+                                  stiffness: 500,
+                                  damping: 30
           )}
       </motion.div>
-      </div>
     );
   };
-
-  // Render dice with dots based on value
-  const renderDice = (value) => {
+                            )
+                          )}
+                        </div>
+                      </div>
     return (
       <motion.div 
         className={`dice ${isRolling ? 'dice-rolling' : ''}`}
