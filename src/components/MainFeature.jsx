@@ -313,21 +313,21 @@ function MainFeature() {
     if (number === totalCells) cellClass = "finish-cell";
     if (number === totalCells) cellClass += " bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400";
 
-      <motion.div 
-        key={`cell-${number}`} 
+    return (
+      <motion.div
+        key={`cell-${number}`}
         className={`game-cell ${cellClass}`}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, delay: 0.01 * number }}
       >
         <span className="z-10 relative">{number}</span>
-        {number}
         {/* Cell icons */}
         {number === 1 && <PlayIcon className="absolute top-0 right-0 w-3 h-3 text-blue-600" />}
         {number === totalCells && <TrophyIcon className="absolute top-0 right-0 w-3 h-3 text-purple-600" />}
         {snakeStart && <ArrowDownIcon className="absolute top-0 right-0 w-3 h-3 text-red-600 animate-pulse" />}
         {ladderStart && <ArrowUpIcon className="absolute top-0 right-0 w-3 h-3 text-green-600 animate-pulse" />}
-        {ladderStart && <ArrowUpIcon className="absolute top-0 right-0 w-3 h-3 text-green-600" />}
+        
         
         <div className="absolute inset-0 flex items-center justify-center z-20">
         <div className="flex flex-wrap gap-1 justify-center">
@@ -339,16 +339,15 @@ function MainFeature() {
                 initial={{ scale: 0 }}
                 transition={{ 
                   type: "spring", 
-                  stiffness: 500, 
-                  damping: 30 
-                }}
+                  type: "spring",
+                  stiffness: 500,
+                  damping: 30
               >
+                animate={{ scale: 1 }}
               >
-                                  type: "spring",
-                                  stiffness: 500,
-                                  damping: 30
-          )}
-      </motion.div>
+                {player.id}
+              </motion.div>
+            )
     );
   };
                             )
