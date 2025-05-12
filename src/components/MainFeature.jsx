@@ -335,7 +335,6 @@ function MainFeature() {
             player.position === number && (
               <motion.div
                 className={`player-token ${currentPlayer === index && !winner ? 'active-player' : ''}`}
-                className="player-token"
                 style={{ backgroundColor: player.color }}
                 initial={{ scale: 0 }}
                 transition={{ 
@@ -343,11 +342,10 @@ function MainFeature() {
                   stiffness: 500, 
                   damping: 30 
                 }}
-                transition={{ type: "spring", stiffness: 500, damping: 30 }}
+              >
               >
                 {player.id}
               </motion.div>
-              />
             )
           )}
       </motion.div>
@@ -631,10 +629,6 @@ function MainFeature() {
                               {player.name}: <span className="font-medium">{player.position}</span> / {boardSize * boardSize}
                             </span>
                             {currentPlayer === index && !isRolling && !winner && (
-                              {player.position === players[currentPlayer].position && 
-                               currentPlayer === players.findIndex(p => p.id === player.id) && 
-                               !isRolling && 
-                               " (Current)"}
                               <div className="w-2 h-2 rounded-full bg-primary animate-pulse"></div>
                             )}
                           </motion.div>
