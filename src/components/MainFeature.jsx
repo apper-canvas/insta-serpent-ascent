@@ -337,13 +337,12 @@ function MainFeature() {
                 className={`player-token ${currentPlayer === index && !winner ? 'active-player' : ''}`}
                 style={{ backgroundColor: player.color }}
                 initial={{ scale: 0 }}
-                transition={{ 
-                  type: "spring", 
+                animate={{ scale: 1 }}
+                transition={{
                   type: "spring",
                   stiffness: 500,
                   damping: 30
-              >
-                animate={{ scale: 1 }}
+                }}
               >
                 {player.id}
               </motion.div>
