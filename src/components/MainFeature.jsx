@@ -299,24 +299,26 @@ function MainFeature() {
   };
   
   const renderCell = (number, totalCells) => {
-    // Determine if this cell has a snake or ladder
-    const snakeStart = boardElements.find(el => el.type === "snake" && el.startPosition === number);
-    const ladderStart = boardElements.find(el => el.type === "ladder" && el.startPosition === number);
-    
-    // Determine cell class based on type
-    let cellClass = number % 2 === 0 ? "cell-even" : "cell-odd";
-    if (snakeStart) cellClass = "snake-cell";
-    if (ladderStart) cellClass = "ladder-cell";
-    
-    // Special styling for start and finish
-    if (number === 1) cellClass = "start-cell";
-    if (number === totalCells) cellClass = "finish-cell";
-    if (number === totalCells) cellClass += " bg-purple-100 dark:bg-purple-950 text-purple-600 dark:text-purple-400";
-
     return (
       <motion.div
         key={`cell-${number}`}
-        className={`game-cell ${cellClass}`}
+        className={`game-cell ${(() => {
+          // Determine cell class based on type
+          let cellClass = number % 2 === 0 ? "cell-even" : "cell-odd";
+          
+          // Determine if this cell has a snake or ladder
+          const snakeStart = boardElements.find(el => el.type === "snake" && el.startPosition === number);
+          const ladderStart = boardElements.find(el => el.type === "ladder" && el.startPosition === number);
+          
+          if (snakeStart) cellClass = "snake-cell";
+          if (ladderStart) cellClass = "ladder-cell";
+          
+          // Special styling for start and finish
+          if (number === 1) cellClass = "start-cell";
+          if (number === totalCells) cellClass = "finish-cell";
+          
+          return cellClass;
+        })()}`}
         initial={{ opacity: 0, scale: 0.9 }}
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.3, delay: 0.01 * number }}
@@ -325,33 +327,37 @@ function MainFeature() {
         {/* Cell icons */}
         {number === 1 && <PlayIcon className="absolute top-0 right-0 w-3 h-3 text-blue-600" />}
         {number === totalCells && <TrophyIcon className="absolute top-0 right-0 w-3 h-3 text-purple-600" />}
-        {snakeStart && <ArrowDownIcon className="absolute top-0 right-0 w-3 h-3 text-red-600 animate-pulse" />}
-        {ladderStart && <ArrowUpIcon className="absolute top-0 right-0 w-3 h-3 text-green-600 animate-pulse" />}
-        
+        {boardElements.find(el => el.type === "snake" && el.startPosition === number) && 
+          <ArrowDownIcon className="absolute top-0 right-0 w-3 h-3 text-red-600 animate-pulse" />}
+        {boardElements.find(el => el.type === "ladder" && el.startPosition === number) && 
+          <ArrowUpIcon className="absolute top-0 right-0 w-3 h-3 text-green-600 animate-pulse" />}
         
         <div className="absolute inset-0 flex items-center justify-center z-20">
-        <div className="flex flex-wrap gap-1 justify-center">
-          {players.map((player, index) => 
-            player.position === number && (
-              <motion.div
-                className={`player-token ${currentPlayer === index && !winner ? 'active-player' : ''}`}
-                style={{ backgroundColor: player.color }}
-                initial={{ scale: 0 }}
-                animate={{ scale: 1 }}
-                transition={{
-                  type: "spring",
-                  stiffness: 500,
-                  damping: 30
-                }}
-              >
-                {player.id}
-              </motion.div>
-            )
+          <div className="flex flex-wrap gap-1 justify-center">
+            {players.map((player, index) => 
+              player.position === number && (
+                <motion.div
+                  key={`player-${player.id}-pos-${number}`}
+                  className={`player-token ${currentPlayer === index && !winner ? 'active-player' : ''}`}
+                  style={{ backgroundColor: player.color }}
+                  initial={{ scale: 0 }}
+                  animate={{ scale: 1 }}
+                  transition={{
+                    type: "spring",
+                    stiffness: 500,
+                    damping: 30
+                  }}
+                >
+                  {player.id}
+                </motion.div>
+              )
+            )}
+          </div>
+        </div>
+      </motion.div>
     );
   };
-                            )
-                          )}
-                        </div>
+
                       </div>
     return (
       <motion.div 
